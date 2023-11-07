@@ -31,11 +31,11 @@ const LeftBar = (props) => {
     setFilteredmarkers(markers);
   }, [activeMarker, infoWindowContent]);
 
-  useEffect(()=>{
-    setFilteredmarkers(markers)
-    setSelectedMarker(null)
-    setSelectedMarkerInfo(null)
-  }, [markers])
+  useEffect(() => {
+    setFilteredmarkers(markers);
+    setSelectedMarker(null);
+    setSelectedMarkerInfo(null);
+  }, [markers]);
 
   //Remove the selected marker from markers list
   useEffect(() => {
@@ -46,7 +46,10 @@ const LeftBar = (props) => {
   }, [selectedMarker]);
 
   const handleSingleClick = async (marker) => {
-    console.log("🚀 ~ file: LeftBar.jsx:50 ~ handleSingleClick ~ marker:", marker)
+    console.log(
+      "🚀 ~ file: LeftBar.jsx:50 ~ handleSingleClick ~ marker:",
+      marker
+    );
     const lat = marker.position.lat;
     const lng = marker.position.lng;
     setSelectedMarker(marker);
@@ -89,15 +92,17 @@ const LeftBar = (props) => {
           Hide
         </button>
       </div>
-      {selectedMarker && <div className="flex justify-between items-center p-4">
-        <strong>Quest {selectedMarker?.label}</strong>
-        <button
-          onClick={() => deleteMarker(selectedMarker)}
-          className=" text-center rounded-full bg-slate-300 text-gray-700 w-8 h-8 hover:bg-slate-400  hover:text-gray-800 transition ease-in-out duration-300"
-        >
-          X
-        </button>
-      </div>}
+      {selectedMarker && (
+        <div className="flex justify-between items-center p-4">
+          <strong>Quest {selectedMarker?.label}</strong>
+          <button
+            onClick={() => deleteMarker(selectedMarker)}
+            className=" text-center rounded-full bg-slate-300 text-gray-700 w-8 h-8 hover:bg-slate-400  hover:text-gray-800 transition ease-in-out duration-300"
+          >
+            X
+          </button>
+        </div>
+      )}
       {selectedMarkerInfo && selectedMarker && (
         <div className="p-4 shadow bg-slate-300 rounded-lg mx-4">
           <p>{selectedMarkerInfo}</p>
