@@ -10,16 +10,19 @@ import {
   query,
 } from "firebase/firestore";
 import app from "../firebase";
+import LeftBar from "./LeftBar";
 
 function QuestMap(props) {
   const [markers, setMarkers] = useState([]);
   const [activeMarker, setActiveMarker] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
   const [infoWindowContent, setInfoWindowContent] = useState("");
+  const [showLeftbar, setShowLeftbar] = useState(false);
+  const [reloadMarkers, setrRloadMarkers] = useState(false); //To reload data after deleting marker in leftbar
 
   var db = getFirestore(app);
 
-  //Show the mark and save it in firestor
+  //Create a Mark and save it in firestore
   const handleMapClick = async (mapProps, map, event) => {
     const newMarker = {
       position: event.latLng,
@@ -77,16 +80,21 @@ function QuestMap(props) {
     }
   };
 
+  const handleReloadMarker = () => {
+    setrRloadMarkers(!reloadMarkers);
+  };
+  // Fetch existing markers when the component mounts
   useEffect(() => {
-    // Fetch existing markers when the component mounts
     fetchExistingMarkers();
-  }, []);
+  }, [reloadMarkers]);
 
+  //When user click on a Marker show tooltip
   const markerClickHandler = async (marker, index) => {
     const lat = marker.position.lat;
     const lng = marker.position.lng;
     setActiveMarker(marker);
-    setShowInfoWindow(true)
+    setShowInfoWindow(true);
+    setShowLeftbar(true);
     await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${
         import.meta.env.VITE_GOOGLE_KEY
@@ -106,8 +114,32 @@ function QuestMap(props) {
       });
   };
 
+  const hideLeftbar = () => {
+    setShowLeftbar(false);
+  };
+
   return (
     <div>
+      {showLeftbar && (
+        <div
+          className=" h-full w-1/4 bg-gray-100 shadow"
+          style={{
+            position: "absolute",
+            zIndex: 999,
+            borderRight: "2px solid gray",
+            borderTopRightRadius: "10px",
+            borderBottomRightRadius: "10px",
+          }}
+        >
+          <LeftBar
+            markers={markers}
+            infoWindowContent={infoWindowContent}
+            activeMarker={activeMarker}
+            hideLeftbar={hideLeftbar}
+            handleReloadMarker={handleReloadMarker}
+          />
+        </div>
+      )}
       <Map
         google={props.google}
         zoom={12}
@@ -122,9 +154,6 @@ function QuestMap(props) {
             {...marker}
           />
         ))}
-        {
-          console.log("checking: ", activeMarker, infoWindowContent, showInfoWindow)
-        }
         {showInfoWindow ? (
           <InfoWindow
             position={{
