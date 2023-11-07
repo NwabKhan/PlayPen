@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import { getFirestore, collection, doc, setDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import app from "../firebase";
 
 function QuestMap(props) {
   const [markers, setMarkers] = useState([]);
+  const [activeMarker, setActiveMarker] = useState(null);
+  const [showInfoWindow, setShowInfoWindow] = useState(false);
+  const [infoWindowContent, setInfoWindowContent] = useState("");
+
   var db = getFirestore(app);
 
   //Show the mark and save it in firestor
@@ -69,6 +81,31 @@ function QuestMap(props) {
     // Fetch existing markers when the component mounts
     fetchExistingMarkers();
   }, []);
+
+  const markerClickHandler = async (marker, index) => {
+    const lat = marker.position.lat;
+    const lng = marker.position.lng;
+    setActiveMarker(marker);
+    setShowInfoWindow(true)
+    await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${
+        import.meta.env.VITE_GOOGLE_KEY
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.results && data.results.length > 0) {
+          const address = data.results[0].formatted_address;
+          setInfoWindowContent(address);
+          setShowInfoWindow(true);
+        }
+      })
+      .catch((error) => {
+        console.error("Error in reverse geocoding:", error);
+        setShowInfoWindow(false);
+      });
+  };
+
   return (
     <div>
       <Map
@@ -78,8 +115,35 @@ function QuestMap(props) {
         initialCenter={{ lat: 33.7077, lng: 73.0498 }}
       >
         {markers.map((marker, index) => (
-          <Marker key={index} {...marker} />
+          <Marker
+            onClick={() => markerClickHandler(marker, index)}
+            key={index}
+            // title={marker.name}
+            {...marker}
+          />
         ))}
+        {
+          console.log("checking: ", activeMarker, infoWindowContent, showInfoWindow)
+        }
+        {showInfoWindow ? (
+          <InfoWindow
+            position={{
+              lat: activeMarker.position.lat,
+              lng: activeMarker.position.lng,
+            }}
+            marker={activeMarker}
+            visible={showInfoWindow}
+          >
+            <div className="p-4 bg-slate-200 rounded">
+              <p
+                style={{ maxWidth: "8rem" }}
+                className="text-gray-800 truncate overflow-hidden"
+              >
+                {infoWindowContent}
+              </p>
+            </div>
+          </InfoWindow>
+        ) : null}
       </Map>
     </div>
   );
