@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  getFirestore,
-  collection,
-  doc,
-  deleteDoc,
-  getDocs,
-  orderBy,
-  query,
-} from "firebase/firestore";
+import { getFirestore, doc, deleteDoc } from "firebase/firestore";
 import app from "../firebase";
 
 const LeftBar = (props) => {
-  const {
-    markers,
-    activeMarker,
-    infoWindowContent,
-    hideLeftbar,
-    handleReloadMarker,
-  } = props;
+  const { markers, activeMarker, infoWindowContent, handleReloadMarker } =
+    props;
   const [selectedMarker, setSelectedMarker] = useState(activeMarker);
   const [selectedMarkerInfo, setSelectedMarkerInfo] =
     useState(infoWindowContent);
@@ -47,7 +34,7 @@ const LeftBar = (props) => {
 
   const handleSingleClick = async (marker) => {
     console.log(
-      "🚀 ~ file: LeftBar.jsx:50 ~ handleSingleClick ~ marker:",
+      "🚀 ~ file: LeftBar.jsx:44 ~ handleSingleClick ~ marker:",
       marker
     );
     const lat = marker.position.lat;
@@ -60,6 +47,7 @@ const LeftBar = (props) => {
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("🚀 ~ file: LeftBar.jsx:50 ~ .then ~ data:", data.results)
         if (data.results && data.results.length > 0) {
           const address = data.results[0].formatted_address;
           setSelectedMarkerInfo(address);
@@ -83,14 +71,8 @@ const LeftBar = (props) => {
 
   return (
     <div className="h-full">
-      <div className=" flex justify-between p-4 border-b-2 border-b-gray-600 ">
+      <div className=" flex p-4 border-b-2 border-b-gray-600 ">
         <strong>Quest_0001</strong>
-        <button
-          onClick={hideLeftbar}
-          className=" px-2 py-1 text-center rounded-full bg-slate-300 text-gray-700 hover:bg-slate-400 hover:text-gray-800 transition ease-in-out duration-300"
-        >
-          Hide
-        </button>
       </div>
       {selectedMarker && (
         <div className="flex justify-between items-center p-4">

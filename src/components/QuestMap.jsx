@@ -17,7 +17,6 @@ function QuestMap(props) {
   const [activeMarker, setActiveMarker] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
   const [infoWindowContent, setInfoWindowContent] = useState("");
-  const [showLeftbar, setShowLeftbar] = useState(false);
   const [reloadMarkers, setrRloadMarkers] = useState(false); //To reload data after deleting marker in leftbar
 
   var db = getFirestore(app);
@@ -94,7 +93,6 @@ function QuestMap(props) {
     const lng = marker.position.lng;
     setActiveMarker(marker);
     setShowInfoWindow(true);
-    setShowLeftbar(true);
     await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${
         import.meta.env.VITE_GOOGLE_KEY
@@ -114,13 +112,8 @@ function QuestMap(props) {
       });
   };
 
-  const hideLeftbar = () => {
-    setShowLeftbar(false);
-  };
-
   return (
     <div>
-      {showLeftbar && (
         <div
           className=" h-full w-1/4 bg-gray-100 shadow"
           style={{
@@ -135,16 +128,14 @@ function QuestMap(props) {
             markers={markers}
             infoWindowContent={infoWindowContent}
             activeMarker={activeMarker}
-            hideLeftbar={hideLeftbar}
             handleReloadMarker={handleReloadMarker}
           />
         </div>
-      )}
       <Map
         google={props.google}
         zoom={12}
         onClick={handleMapClick}
-        initialCenter={{ lat: 33.7077, lng: 73.0498 }}
+        initialCenter={{ lat: 34.0195, lng: -118.4912 }}
       >
         {markers.map((marker, index) => (
           <Marker
