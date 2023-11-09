@@ -11,6 +11,8 @@ import {
 } from "firebase/firestore";
 import app from "../firebase";
 import LeftBar from "./LeftBar";
+import Rightbar from "./Rightbar";
+import Topbar from "./Topbar";
 
 function QuestMap(props) {
   const [markers, setMarkers] = useState([]);
@@ -114,26 +116,39 @@ function QuestMap(props) {
 
   return (
     <div>
-        <div
-          className=" h-full w-1/4 bg-gray-100 shadow"
-          style={{
-            position: "absolute",
-            zIndex: 999,
-            borderRight: "2px solid gray",
-            borderTopRightRadius: "10px",
-            borderBottomRightRadius: "10px",
-          }}
-        >
-          <LeftBar
-            markers={markers}
-            infoWindowContent={infoWindowContent}
-            activeMarker={activeMarker}
-            handleReloadMarker={handleReloadMarker}
-          />
-        </div>
+      <div
+        className=" w-full bg-gray-100 shadow"
+        style={{
+          position: "absolute",
+          zIndex: 99,
+          borderBottom: "2px solid gray",
+          left: 0,
+          top: 0,
+          padding: "0.7rem"
+        }}
+      >
+        <Topbar />
+      </div>
+      <div
+        className=" h-full w-1/6 bg-gray-100 shadow"
+        style={{
+          position: "absolute",
+          zIndex: 99,
+          borderRight: "2px solid gray",
+          left: 0,
+          top: "4rem",
+        }}
+      >
+        <LeftBar
+          markers={markers}
+          infoWindowContent={infoWindowContent}
+          activeMarker={activeMarker}
+          handleReloadMarker={handleReloadMarker}
+        />
+      </div>
       <Map
         google={props.google}
-        zoom={12}
+        zoom={13}
         onClick={handleMapClick}
         initialCenter={{ lat: 34.0195, lng: -118.4912 }}
       >
@@ -165,6 +180,18 @@ function QuestMap(props) {
           </InfoWindow>
         ) : null}
       </Map>
+      <div
+        className=" h-full w-1/4 bg-gray-100 shadow"
+        style={{
+          position: "absolute",
+          zIndex: 99,
+          borderLeft: "2px solid gray",
+          right: 0,
+          top: "4rem",
+        }}
+      >
+        <Rightbar />
+      </div>
     </div>
   );
 }

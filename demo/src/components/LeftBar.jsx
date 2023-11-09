@@ -32,11 +32,20 @@ const LeftBar = (props) => {
     setFilteredmarkers(remainings);
   }, [selectedMarker]);
 
+  // const checkImage = async () => {
+  //   await fetch(
+  //     `https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJacsMkBm7woAR5ofCEoQz7f4&key=${import.meta.env.VITE_GOOGLE_KEY}`
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("🚀 ~ file: LeftBar.jsx:43 ~ .then ~ data:", data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error in reverse geocoding:", error);
+  //     });
+  // };
+
   const handleSingleClick = async (marker) => {
-    console.log(
-      "🚀 ~ file: LeftBar.jsx:44 ~ handleSingleClick ~ marker:",
-      marker
-    );
     const lat = marker.position.lat;
     const lng = marker.position.lng;
     setSelectedMarker(marker);
@@ -47,9 +56,13 @@ const LeftBar = (props) => {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("🚀 ~ file: LeftBar.jsx:50 ~ .then ~ data:", data.results)
         if (data.results && data.results.length > 0) {
+          console.log(
+            "🚀 ~ file: LeftBar.jsx:62 ~ .then ~ data.results:",
+            data.results
+          );
           const address = data.results[0].formatted_address;
+          const place_id = data.results[0].place_id;
           setSelectedMarkerInfo(address);
         }
       })
@@ -73,6 +86,7 @@ const LeftBar = (props) => {
     <div className="h-full">
       <div className=" flex p-4 border-b-2 border-b-gray-600 ">
         <strong>Quest_0001</strong>
+        {/* <button onClick={checkImage}>Oka</button> */}
       </div>
       {selectedMarker && (
         <div className="flex justify-between items-center p-4">
